@@ -10,8 +10,8 @@ INIT:
 	MOV DPTR,#LUT ; Inicia DPTR com o endereço do primeiro elemento na LUT
 
 MAIN:
-	JB P2.0, SLOW ; Se SW0 precionado, ir para rotina de 0.25s
-	JB P2.1, FAST ; se SW1 precionado, ir para rotina de 1s
+	JNB P2.0, SLOW ; Se SW0 precionado, ir para rotina de 0.25s
+	JNB P2.1, FAST ; se SW1 precionado, ir para rotina de 1s
 	SJMP MAIN
 
 SLOW:
