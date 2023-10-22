@@ -4,8 +4,6 @@ SELECT:
 	SetB P0.7 ; chip selection
 	SetB P3.3 ; select display
 	SetB P3.4 ; select display
-	
-INIT: 
 	MOV R3, #00Ah ; inicia R3 com o valor 10
 	MOV DPTR,#LUT ; Inicia DPTR com o endereço do primeiro elemento na LUT
 
@@ -14,14 +12,27 @@ MAIN:
 	JNB P2.1, FAST ; se SW1 precionado, ir para rotina de 1s
 	SJMP MAIN
 
+INIT: 
+	MOV R3, #00Ah ; inicia R3 com o valor 10
+	MOV DPTR,#LUT ; Inicia DPTR com o endereço do primeiro elemento na LUT
+	RET
+
 SLOW:
 	ACALL DELAY_250MS ; Delay de 0.25s
+	JNB P2.1, FAST
 	ACALL UPDATE_DISPLAY ; Vai para UPDATE_DISPLAY
-
+	DJNZ R3, SLOW
+	ACALL INIT
+	SJMP SLOW
+	
 
 FAST:
 	ACALL DELAY_1S ; Delay de 1s
+	JNB P2.0, SLOW
 	ACALL UPDATE_DISPLAY ;vai para UPDATE_DISPLAY
+	DJNZ R3, FAST
+	ACALL INIT
+	SJMP FAST
 
 
 UPDATE_DISPLAY:
@@ -29,8 +40,8 @@ UPDATE_DISPLAY:
 	MOVC A,@A+DPTR ; Coloca o valor que está no endereço de memória mostrado
 	MOV P1,A ; Atualiza o display com o valor de A
 	INC DPTR ; Incrementa DPTR para o próximo dígito na LUT
-	DJNZ R3, MAIN ;se R3 == 0, pula pra main
-	SJMP INIT ;Simple jump pro inicio
+	RET
+
 
 DELAY_1S:
 	MOV R2, #4 ;Inicia R2 com o valor 4
@@ -51,6 +62,7 @@ RET
 
 ORG 0200H
 ;Coloca os valores de 0 a 9 em hexa
-LUT:	DB 0C0h ,0F9h,0A4h,0B0h,099h,092h,082h,0F8h,080h,090h,000h
+LUT:	DB 0C0h,0F9h,0A4h,0B0h,099h,092h,082h,0F8h,080h,090h,000h
 	
 END
+
