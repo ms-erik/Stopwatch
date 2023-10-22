@@ -19,20 +19,20 @@ INIT:
 
 SLOW:
 	ACALL DELAY_250MS ; Delay de 0.25s
-	JNB P2.1, FAST
+	JNB P2.1, FAST; Se SW1 for precionado, vai para rotina de 1s
 	ACALL UPDATE_DISPLAY ; Vai para UPDATE_DISPLAY
-	DJNZ R3, SLOW
-	ACALL INIT
-	SJMP SLOW
+	DJNZ R3, SLOW; enquanto R3 !=0, volta para rotina
+	ACALL INIT; chama a subrotina INIT 
+	SJMP SLOW; volta para o inicio da subrotina
 	
 
 FAST:
 	ACALL DELAY_1S ; Delay de 1s
-	JNB P2.0, SLOW
+	JNB P2.0, SLOW; se SW0 for precionado, vai para rotina de 0.25s
 	ACALL UPDATE_DISPLAY ;vai para UPDATE_DISPLAY
-	DJNZ R3, FAST
-	ACALL INIT
-	SJMP FAST
+	DJNZ R3, FAST; enquanto R3 !=0, volta para rotina
+	ACALL INIT; chama a subrotina INIT 
+	SJMP FAST; volta para o inicio da subrotina
 
 
 UPDATE_DISPLAY:
@@ -40,7 +40,7 @@ UPDATE_DISPLAY:
 	MOVC A,@A+DPTR ; Coloca o valor que está no endereço de memória mostrado
 	MOV P1,A ; Atualiza o display com o valor de A
 	INC DPTR ; Incrementa DPTR para o próximo dígito na LUT
-	RET
+	RET; retorna para o local em que foi chamada a subrotina
 
 
 DELAY_1S:
@@ -60,6 +60,7 @@ DELAY_LOOP_25:
 	DJNZ R1, DELAY_LOOP_25 ; Enquanto R1 !=0, chama a subrotina
 RET
 
+;define uma nova origem
 ORG 0200H
 ;Coloca os valores de 0 a 9 em hexa
 LUT:	DB 0C0h,0F9h,0A4h,0B0h,099h,092h,082h,0F8h,080h,090h,000h
