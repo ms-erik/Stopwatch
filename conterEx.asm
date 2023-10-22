@@ -52,12 +52,12 @@ DELAY_LOOP_1S:
 
 DELAY_250MS:
 	MOV R1, #500 ; Inicia R1 com o valor 500
-	ACALL DELAY_LOOP_25 ; chama a subrotina
+	ACALL DELAY ; chama a subrotina
 
-DELAY_LOOP_25: 
+DELAY: 
 	MOV R0,#250 ; Inicia R0 com 250
 	DJNZ R0, $ ; enquanto R0 != 0, fica em loop
-	DJNZ R1, DELAY_LOOP_25 ; Enquanto R1 !=0, chama a subrotina
+	DJNZ R1, DELAY ; Enquanto R1 !=0, chama a subrotina
 RET
 
 ;define uma nova origem
